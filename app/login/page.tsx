@@ -12,8 +12,11 @@ export default function Login(){
     const handleSubmit= async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try{
-            const response = await fetch(`${process.env.LOCAL_URL}/api/login`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_URL}/api/login`, {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({email, password})
             })
             if(!response.ok){
