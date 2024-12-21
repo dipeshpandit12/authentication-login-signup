@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import User from "@/models/user";
 import { connectMongoDB } from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export async function POST(req){
     try{
@@ -17,7 +18,10 @@ export async function POST(req){
             if(!passwordMatch){
                 return NextResponse.json({message: "Invalid credentials"}, {status: 401})
             }
-            return NextResponse.json({message: "User logged in successfully"}, {status: 200})
+            const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: "1h"});
+            const response= NextResponse.json({message: "User logged in successfully", token}, {status: 200})
+            response.cookies.set('token', token, {httpOnly: true});
+            return response;
         }else{
             return NextResponse.json({message: "Invalid credentials"}, {status: 401})
         }
